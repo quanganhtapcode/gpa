@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Comprehensive GPA Calculator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Roboto', sans-serif;
+            line-height: 1.6;
+            background: linear-gradient(135deg, #e6f2ff 0%, #d1e3ff 100%);
+            margin: 0;
+            padding: 20px;
+            color: #1a3b5d;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 25px;
+        }
+
+        h1 {
+            color: #0a2540;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #2563eb;
+            padding-bottom: 10px;
+        }
+
+        h2, h3 {
+            color: #0a2540;
+        }
+
+        select, input[type="number"], input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #bdd4f5;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: all 0.3s;
+            font-family: 'Roboto', sans-serif;
+        }
+
+        select:focus, input:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 5px rgba(37, 99, 235, 0.5);
+            outline: none;
+        }
+
+        button {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            width: 100%;
+            margin-top: 10px;
+            font-family: 'Roboto', sans-serif;
+            font-weight: 500;
+        }
+
+        button:hover {
+            background-color: #1d4ed8;
+        }
+
+        .result-box {
+            background-color: #f0f7ff;
+            border-left: 4px solid #2563eb;
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 4px;
+            font-size: 18px;
+        }
+
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+        }
+
+        .tab {
+            padding: 10px 20px;
+            background-color: #e2e8f0;
+            cursor: pointer;
+            border-radius: 5px 5px 0 0;
+            margin-right: 5px;
+            font-weight: 500;
+        }
+
+        .tab.active {
+            background-color: #2563eb;
+            color: white;
+        }
+
+        .content-section {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .col {
+            flex: 1;
+            min-width: 250px;
+            margin: 0 10px;
+        }
+
+        .progress-dashboard {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f0f7ff;
+            border-radius: 8px;
+        }
+
+        .metrics-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .metric-card {
+            flex: 1;
+            min-width: 200px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+        }
+
+        .progress-bar {
+            height: 20px;
+            background-color: #e2e8f0;
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            height: 100%;
+            background-color: #2563eb;
+            width: 60%;
+        }
+        
+        .grade-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        
+        .grade-table th, .grade-table td {
+            border: 1px solid #bdd4f5;
+            padding: 8px;
+            text-align: center;
+        }
+        
+        .grade-table th {
+            background-color: #e2e8f0;
+            color: #0a2540;
+        }
+        
+        .content {
+            display: none;
+            background-color: white;
+            padding: 20px;
+            border-radius: 0 5px 5px 5px;
+        }
+        
+        #resultArea {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .combinations-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .combinations-table th, .combinations-table td {
+            border: 1px solid #bdd4f5;
+            padding: 10px;
+            text-align: center;
+        }
+        
+        .combinations-table th {
+            background-color: #e2e8f0;
+            font-weight: bold;
+            color: #0a2540;
+        }
+        
+        .combinations-table tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        
+        .combinations-table tr:hover {
+            background-color: #f0f7ff;
+        }
+        
+        .grade-distribution {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .grade-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .grade-card h3 {
+            margin-top: 0;
+            color: #0a2540;
+        }
+        
+        .grade-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #2563eb;
+        }
+        
+        .multi-chart-container {
+            display: flex;
+            width: 100%;
+            margin: 0 auto;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;    
+        }
+        
+        .chart-box {
+            flex: 1;
+            min-width: 400px;
+            margin: 10px;
+            background-color: white;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .credits-info {
+            background-color: #f0f7ff;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #1a3b5d;
+            border-left: 4px solid #2563eb;
+        }
+        
+        .course-completion-chart {
+            margin-top: 30px;
+            padding: 20px;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .pagination {
+            margin-top: 15px;
+            text-align: center;
+        }
+        
+        .pagination button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            width: auto;
+        }
+        
+        .final-gpa {
+            font-weight: bold;
+            color: #2563eb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Comprehensive GPA Calculator</h1>
+        
+        <div class="tab-container">
+            <div class="tab active" data-target="targetGPA">Target GPA</div>
+            <div class="tab" data-target="calculateGPA">Calculate GPA</div>
+        </div>
+        
+        <div id="targetGPA" class="content">
+            <h2>Target GPA</h2>
+            
+            <div class="content-section">
+                <div class="col">
+                    <label for="gradingScale">Select Grading Scale:</label>
+                    <select id="gradingScale" onchange="updateGradingScale()">
+                        <option value="USF">USF</option>
+                        <option value="NEU">NEU</option>
+                    </select>
+                    
+                    <div id="USFScale">
+                        <table class="grade-table">
+                            <tr><th>Grade</th><th>Points</th></tr>
+                            <tr><td>A</td><td>4.0</td></tr>
+                            <tr><td>B</td><td>3.0</td></tr>
+                            <tr><td>C</td><td>2.0</td></tr>
+                            <tr><td>D</td><td>1.0</td></tr>
+                            <tr><td>F</td><td>0.0</td></tr>
+                        </table>
+                    </div>
+                    
+                    <div id="NEUScale" style="display:none;">
+                        <table class="grade-table">
+                            <tr><th>Grade</th><th>Points</th></tr>
+                            <tr><td>A+</td><td>4.0</td></tr>
+                            <tr><td>A</td><td>4.0</td></tr>
+                            <tr><td>A-</td><td>3.7</td></tr>
+                            <tr><td>B+</td><td>3.5</td></tr>
+                            <tr><td>B</td><td>3.0</td></tr>
+                            <tr><td>B-</td><td>2.7</td></tr>
+                            <tr><td>C+</td><td>2.5</td></tr>
+                            <tr><td>C</td><td>2.0</td></tr>
+                            <tr><td>D</td><td>1.0</td></tr>
+                            <tr><td>F</td><td>0.0</td></tr>
+                        </table>
+                    </div>
+                </div>
+                
+                <div class="col">
+                    <label for="totalCredits">Total credits required for the degree:</label>
+                    <input type="number" id="totalCredits" min="0" placeholder="e.g., 120">
+                    
+                    <label for="targetCurrentGPA">Current GPA:</label>
+                    <input type="number" id="targetCurrentGPA" min="0" max="4" step="0.01" placeholder="e.g., 3.2">
+                    
+                    <label for="targetCompletedCredits">Completed Credits:</label>
+                    <input type="number" id="targetCompletedCredits" min="0" placeholder="e.g., 60">
+                    
+                    <label for="targetGPAInput">Target GPA:</label>
+                    <input type="number" id="targetGPAInput" min="0" max="4" step="0.01" placeholder="e.g., 3.5">
+                    
+                    <button id="calculateTargetButton" onclick="calculateTargetGPA()">Calculate Target GPA</button>
+                </div>
+            </div>
+            
+            <div id="creditsInfo" class="credits-info">
+                <p>Note: Each course is worth 3 credits. Your remaining credits will be converted to courses for calculation.</p>
+            </div>
+            
+            <!-- Credit Progress Dashboard - Moved to first page -->
+            <div class="progress-dashboard" id="creditsProgressDashboard" style="display:none;">
+                <h2>Your Credits Progress</h2>
+                <div class="metrics-container">
+                    <div class="metric-card">
+                        <h3>Credits Progress</h3>
+                        <div class="progress-bar">
+                            <div id="creditsProgressBar" class="progress"></div>
+                        </div>
+                        <p id="creditsProgressStatus">Not calculated yet</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div id="targetResult" class="result-box" style="display:none;"></div>
+            
+            <div id="gradeCombinations" style="display:none; margin-top: 20px;">
+                <h3>Possible Course Grade Combinations to Achieve Target GPA</h3>
+                <div id="combinations-table-container"></div>
+            </div>
+            
+            <div class="grade-distribution" id="gradeDistribution" style="display:none;">
+                <div class="grade-card">
+                    <h3>Grade A</h3>
+                    <div class="grade-value" id="gradeA-count">0</div>
+                </div>
+                <div class="grade-card">
+                    <h3>Grade B</h3>
+                    <div class="grade-value" id="gradeB-count">0</div>
+                </div>
+                <div class="grade-card">
+                    <h3>Grade C</h3>
+                    <div class="grade-value" id="gradeC-count">0</div>
+                </div>
+                <div class="grade-card">
+                    <h3>Grade D</h3>
+                    <div class="grade-value" id="gradeD-count">0</div>
+                </div>
+                <div class="grade-card">
+                    <h3>Grade F</h3>
+                    <div class="grade-value" id="gradeF-count">0</div>
+                </div>
+            </div>
+            
+            <!-- Added dedicated chart containers for target GPA tab -->
+            <div class="multi-chart-container">
+                <div class="chart-box">
+                    <canvas id="requiredGradesPieChart"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <div id="calculateGPA" class="content">
+            <h2>Calculate GPA</h2>
+            <div class="content-section">
+                <div class="col">
+                    <label for="currentGPA">Current GPA:</label>
+                    <input type="number" id="currentGPA" min="0" max="4" step="0.01" placeholder="e.g., 3.5">
+                    
+                    <label for="completedCredits">Completed Credits:</label>
+                    <input type="number" id="completedCredits" min="0" placeholder="e.g., 60">
+                    
+                    <label for="remainingCredits">Remaining Credits:</label>
+                    <input type="number" id="remainingCredits" min="0" placeholder="e.g., 60">
+                </div>
+                
+                <div class="col">
+                    <label for="expectedPerformance">Expected Performance for Remaining Courses:</label>
+                    <select id="expectedPerformance">
+                        <option value="">Select expected performance</option>
+                        <option value="4.0">Excellent (mostly A's)</option>
+                        <option value="3.5">Very Good (mix of A's and B's)</option>
+                        <option value="3.0">Good (mostly B's)</option>
+                        <option value="2.5">Above Average (mix of B's and C's)</option>
+                        <option value="2.0">Average (mostly C's)</option>
+                        <option value="1.5">Below Average (mix of C's and D's)</option>
+                        <option value="1.0">Poor (mostly D's)</option>
+                    </select>
+                    
+                    <button id="calculateButton" onclick="calculateGPA()">Calculate GPA</button>
+                </div>
+            </div>
+            
+            <div id="gpaResult" class="result-box" style="display:none;"></div>
+            
+            <!-- Dedicated chart container for calculate GPA tab -->
+            <div class="course-completion-chart" style="display:none;" id="calcCourseChart">
+                <h3>Course Completion Progress</h3>
+                <canvas id="calcCompletionChart"></canvas>
+            </div>
+            
+            <!-- Added chart container for GPA comparison -->
+            <div class="chart-box" style="display:none;" id="gpaChartContainer">
+                <canvas id="gpaChart"></canvas>
+            </div>
+        </div>
+        
+        <div class="footer">
+            Credit: quanganhdeptrai
+        </div>
+    </div>
+    
+    <script>
+        // Format GPA to two decimal places
+        function formatGPA(gpa) {
+            return (Math.round(gpa * 100) / 100).toFixed(2);
+        }
+        
+        // Tab switching
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.tab');
+            const contentSections = document.querySelectorAll('.content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    // Hide all content sections first
+                    contentSections.forEach(section => section.style.display = 'none');
+                    
+                    // Show the target content
+                    const target = tab.getAttribute('data-target');
+                    document.getElementById(target).style.display = 'block';
+                    
+                    // Reset any displayed results when switching tabs
+                    if (target === 'calculateGPA') {
+                        document.getElementById('gpaResult').style.display = 'none';
+                        if (document.getElementById('calcCourseChart')) {
+                            document.getElementById('calcCourseChart').style.display = 'none';
+                        }
+                        if (document.getElementById('gpaChartContainer')) {
+                            document.getElementById('gpaChartContainer').style.display = 'none';
+                        }
+                    } else if (target === 'targetGPA') {
+                        document.getElementById('targetResult').style.display = 'none';
+                        document.getElementById('gradeCombinations').style.display = 'none';
+                        document.getElementById('gradeDistribution').style.display = 'none';
+                        document.getElementById('creditsProgressDashboard').style.display = 'none';
+                        if (document.getElementById('targetCourseChart')) {
+                            document.getElementById('targetCourseChart').style.display = 'none';
+                        }
+                    }
+                });
+            });
+            
+            // Initialize first tab
+            if (tabs.length > 0) tabs[0].click();
+        });
+        
+        // Calculate GPA
+        function calculateGPA() {
+            const currentGPA = parseFloat(document.getElementById('currentGPA').value) || 0;
+            const completedCredits = parseInt(document.getElementById('completedCredits').value) || 0;
+            const remainingCredits = parseInt(document.getElementById('remainingCredits').value) || 0;
+            const expectedPerformance = parseFloat(document.getElementById('expectedPerformance').value) || 0;
+            
+            if (currentGPA < 0 || currentGPA > 4) {
+                alert("Please enter a valid GPA between 0 and 4.0");
+                return;
+            }
+            
+            if (completedCredits < 0 || remainingCredits < 0) {
+                alert("Credits cannot be negative");
+                return;
+            }
+            
+            if (expectedPerformance === 0) {
+                alert("Please select an expected performance level");
+                return;
+            }
+            
+            const totalCredits = completedCredits + remainingCredits;
+            const weightedCurrentGPA = currentGPA * completedCredits;
+            const weightedExpectedGPA = expectedPerformance * remainingCredits;
+            const finalGPA = (weightedCurrentGPA + weightedExpectedGPA) / totalCredits;
+            
+            const resultElement = document.getElementById('gpaResult');
+            const remainingCourses = Math.ceil(remainingCredits / 3);
+            
+            resultElement.innerHTML = `
+                <strong>Your projected final GPA:</strong> ${formatGPA(finalGPA)}<br>
+                <strong>Total credits:</strong> ${totalCredits}<br>
+                <strong>Remaining courses:</strong> ${remainingCourses} (${remainingCredits} credits)
+            `;
+            resultElement.style.display = 'block';
+            
+            // Only update charts if elements exist
+            if (document.getElementById('gpaChart')) {
+                document.getElementById('gpaChartContainer').style.display = 'block';
+                updateGPAChart(currentGPA, finalGPA);
+            }
+            
+            if (document.getElementById('calcCompletionChart')) {
+                document.getElementById('calcCourseChart').style.display = 'block';
+                updateCalcCompletionChart(completedCredits, totalCredits);
+            }
+        }
+        
+        // Calculate target GPA
+        function calculateTargetGPA() {
+            const currentGPA = parseFloat(document.getElementById('targetCurrentGPA').value) || 0;
+            const completedCredits = parseInt(document.getElementById('targetCompletedCredits').value) || 0;
+            const totalCredits = parseInt(document.getElementById('totalCredits').value) || 0;
+            const targetGPA = parseFloat(document.getElementById('targetGPAInput').value) || 0;
+            
+            if (!currentGPA || !completedCredits || !totalCredits || !targetGPA) {
+                alert("Please fill in all fields.");
+                return;
+            }
+            
+            if (currentGPA < 0 || currentGPA > 4 || targetGPA < 0 || targetGPA > 4) {
+                alert("Please enter valid GPAs between 0 and 4.0");
+                return;
+            }
+            
+            if (completedCredits < 0 || totalCredits < 0) {
+                alert("Credits cannot be negative");
+                return;
+            }
+            
+            if (completedCredits > totalCredits) {
+                alert("Completed credits cannot exceed total credits");
+                return;
+            }
+            
+            const remainingCredits = totalCredits - completedCredits;
+            const remainingCourses = Math.ceil(remainingCredits / 3);
+            
+            if (remainingCredits === 0) {
+                alert("You have already completed all credits");
+                return;
+            }
+            
+            const weightedCurrentGPA = currentGPA * completedCredits;
+            const weightedTotalGPA = targetGPA * totalCredits;
+            const requiredGPA = (weightedTotalGPA - weightedCurrentGPA) / remainingCredits;
+            // Calculate required grade points for remaining courses
+            const P_r = targetGPA * totalCredits - currentGPA * completedCredits;
+            
+            const resultElement = document.getElementById('targetResult');
+            if (requiredGPA > 4.0) {
+                resultElement.innerHTML = `
+                    <strong>Required GPA for remaining courses:</strong> ${formatGPA(requiredGPA)}<br>
+                    <strong>This target is not achievable</strong> as it requires a GPA higher than 4.0 for your remaining ${remainingCourses} courses (${remainingCredits} credits).
+                `;
+                document.getElementById('gradeCombinations').style.display = 'none';
+                document.getElementById('gradeDistribution').style.display = 'none';
+            } else if (requiredGPA < 0) {
+                resultElement.innerHTML = `
+                    <strong>You will exceed your target GPA</strong> even if you get all F's in your remaining courses.<br>
+                    <strong>Current weighted GPA:</strong> ${formatGPA(weightedCurrentGPA)}<br>
+                    <strong>Remaining courses:</strong> ${remainingCourses} (${remainingCredits} credits)
+                `;
+                document.getElementById('gradeCombinations').style.display = 'none';
+                document.getElementById('gradeDistribution').style.display = 'none';
+            } else {
+                resultElement.innerHTML = `
+                    <strong>Required GPA for remaining courses:</strong> ${formatGPA(requiredGPA)}<br>
+                    <strong>Remaining courses:</strong> ${remainingCourses} (${remainingCredits} credits)<br>
+                    <strong>Current weighted GPA:</strong> ${formatGPA(weightedCurrentGPA)}
+                `;
+                
+                const gradingScale = document.getElementById('gradingScale').value;
+                const combinations = generateGradeCombinations(requiredGPA, remainingCourses, gradingScale, currentGPA, completedCredits, P_r, totalCredits);
+                displayGradeCombinations(combinations, remainingCourses);
+            }
+            resultElement.style.display = 'block';
+            
+            updateCreditsProgressDashboard(completedCredits, totalCredits);
+            
+            // Only update charts if elements exist
+            if (document.getElementById('targetChart')) {
+                updateTargetChart(currentGPA, targetGPA, requiredGPA);
+            }
+            
+            if (document.getElementById('progressChart')) {
+                updateProgressChart(completedCredits, remainingCredits, totalCredits);
+            }
+            
+            if (document.getElementById('courseCompletionChart')) {
+                document.getElementById('targetCourseChart').style.display = 'block';
+                updateCourseCompletionChart(completedCredits, totalCredits);
+            }
+        }
+        
+        // Update credits progress dashboard
+        function updateCreditsProgressDashboard(completed, total) {
+            const percentage = (completed / total) * 100;
+            document.getElementById('creditsProgressBar').style.width = `${percentage}%`;
+            document.getElementById('creditsProgressStatus').textContent = 
+                `${percentage.toFixed(0)}% Complete (${completed}/${total} credits)`;
+            document.getElementById('creditsProgressDashboard').style.display = 'block';
+        }
+        
+        // Generate grade combinations
+        function generateGradeCombinations(requiredGPA, remainingCourses, gradingScale, currentGPA, completedCredits, P_r, totalCredits) {
+            console.log(`Generating combinations for requiredGPA: ${requiredGPA}, remainingCourses: ${remainingCourses}, P_r: ${P_r}`);
+            
+            const gradeValues = gradingScale === 'USF' ? 
+                { A: 4.0, B: 3.0, C: 2.0, D: 1.0, F: 0.0 } :
+                { 'A+': 4.0, A: 4.0, 'A-': 3.7, 'B+': 3.5, B: 3.0, 'B-': 2.7, 'C+': 2.5, C: 2.0, D: 1.0, F: 0.0 };
+            
+            const gradesArray = Object.entries(gradeValues).sort((a, b) => b[1] - a[1]);
+            const grades = gradesArray.map(([grade]) => grade);
+            const combinations = [];
+            const creditsPerCourse = 3;
+            const totalRemainingCredits = remainingCourses * creditsPerCourse;
+            
+            if (remainingCourses <= 3) {
+                if (remainingCourses === 1) {
+                    for (let i = 0; i < grades.length; i++) {
+                        const grade = grades[i];
+                        const points = gradeValues[grade] * creditsPerCourse;
+                        if (points >= P_r) {
+                            const achievedGPA = gradeValues[grade];
+                            const finalGPA = (currentGPA * completedCredits + points) / totalCredits;
+                            const combo = { 
+                                gpa: formatGPA(achievedGPA), 
+                                finalGPA: formatGPA(finalGPA), 
+                                [grade]: 1 
+                            };
+                            combinations.push(combo);
+                        }
+                    }
+                } else if (remainingCourses === 2) {
+                    for (let i = 0; i < grades.length; i++) {
+                        for (let j = i; j < grades.length; j++) {
+                            const grade1 = grades[i];
+                            const grade2 = grades[j];
+                            const points = (gradeValues[grade1] + gradeValues[grade2]) * creditsPerCourse;
+                            if (points >= P_r) {
+                                const achievedGPA = (gradeValues[grade1] + gradeValues[grade2]) / 2;
+                                const finalGPA = (currentGPA * completedCredits + points) / totalCredits;
+                                const combo = { 
+                                    gpa: formatGPA(achievedGPA), 
+                                    finalGPA: formatGPA(finalGPA) 
+                                };
+                                if (grade1 === grade2) {
+                                    combo[grade1] = 2;
+                                } else {
+                                    combo[grade1] = 1;
+                                    combo[grade2] = 1;
+                                }
+                                combinations.push(combo);
+                            }
+                        }
+                    }
+                } else if (remainingCourses === 3) {
+                    for (let i = 0; i < grades.length; i++) {
+                        for (let j = i; j < grades.length; j++) {
+                            for (let k = j; k < grades.length; k++) {
+                                const grade1 = grades[i];
+                                const grade2 = grades[j];
+                                const grade3 = grades[k];
+                                const points = (gradeValues[grade1] + gradeValues[grade2] + gradeValues[grade3]) * creditsPerCourse;
+                                if (points >= P_r) {
+                                    const achievedGPA = (gradeValues[grade1] + gradeValues[grade2] + gradeValues[grade3]) / 3;
+                                    const finalGPA = (currentGPA * completedCredits + points) / totalCredits;
+                                    const combo = { 
+                                        gpa: formatGPA(achievedGPA), 
+                                        finalGPA: formatGPA(finalGPA) 
+                                    };
+                                    const gradeCount = {};
+                                    [grade1, grade2, grade3].forEach(g => {
+                                        gradeCount[g] = (gradeCount[g] || 0) + 1;
+                                    });
+                                    Object.keys(gradeCount).forEach(g => {
+                                        combo[g] = gradeCount[g];
+                                    });
+                                    combinations.push(combo);
+                                }
+                            }
+                        }
+                    }
+                }
+            } else {
+                function findCombinations(currentCombo, coursesLeft, pointsSoFar, minGradeIndex) {
+                    if (coursesLeft === 0) {
+                        if (pointsSoFar >= P_r) {
+                            const achievedGPA = pointsSoFar / totalRemainingCredits;
+                            const finalGPA = (currentGPA * completedCredits + pointsSoFar) / totalCredits;
+                            const combo = { 
+                                ...currentCombo, 
+                                gpa: formatGPA(achievedGPA), 
+                                finalGPA: formatGPA(finalGPA) 
+                            };
+                            combinations.push(combo);
+                        }
+                        return;
+                    }
+                    
+                    const maxRemainingPoints = coursesLeft * 4.0 * creditsPerCourse;
+                    if (pointsSoFar + maxRemainingPoints < P_r) {
+                        return;
+                    }
+                    
+                    for (let i = minGradeIndex; i < grades.length; i++) {
+                        const grade = grades[i];
+                        const newCombo = { ...currentCombo };
+                        newCombo[grade] = (newCombo[grade] || 0) + 1;
+                        const newPoints = pointsSoFar + (gradeValues[grade] * creditsPerCourse);
+                        findCombinations(newCombo, coursesLeft - 1, newPoints, i);
+                    }
+                }
+                
+                findCombinations({}, remainingCourses, 0, 0);
+            }
+            
+            console.log(`Generated ${combinations.length} combinations`);
+            combinations.sort((a, b) => parseFloat(b.finalGPA) - parseFloat(a.finalGPA));
+            return combinations;
+        }
+        
+        // Display grade combinations
+        function displayGradeCombinations(combinations, totalCourses) {
+            const container = document.getElementById('combinations-table-container');
+            container.innerHTML = '';
+            
+            if (combinations.length === 0) {
+                container.innerHTML = '<p>No valid combinations found to achieve this GPA.</p>';
+                document.getElementById('gradeCombinations').style.display = 'block';
+                return;
+            }
+            
+            const itemsPerPage = 10;
+            let currentPage = 1;
+            const totalPages = Math.ceil(combinations.length / itemsPerPage);
+            
+            function renderTable(page) {
+                container.innerHTML = '';
+                
+                const startIndex = (page - 1) * itemsPerPage;
+                const endIndex = Math.min(startIndex + itemsPerPage, combinations.length);
+                const currentCombinations = combinations.slice(startIndex, endIndex);
+                
+                const table = document.createElement('table');
+                table.className = 'combinations-table';
+                
+                const thead = document.createElement('thead');
+                const headerRow = document.createElement('tr');
+                
+                const allGradesInCombinations = new Set();
+                combinations.forEach(combo => {
+                    Object.keys(combo).forEach(key => {
+                        if (key !== 'gpa' && key !== 'finalGPA') allGradesInCombinations.add(key);
+                    });
+                });
+                
+                const headers = ['Select', 'Option', ...Array.from(allGradesInCombinations).sort(), 'GPA Remaining Part', 'Final GPA'];
+                headers.forEach(text => {
+                    const th = document.createElement('th');
+                    th.textContent = text;
+                    if (text === 'Final GPA') {
+                        th.style.fontWeight = 'bold';
+                        th.style.color = '#2563eb';
+                    }
+                    headerRow.appendChild(th);
+                });
+                
+                thead.appendChild(headerRow);
+                table.appendChild(thead);
+                
+                const tbody = document.createElement('tbody');
+                currentCombinations.forEach((combo, i) => {
+                    const absoluteIndex = startIndex + i;
+                    const row = document.createElement('tr');
+                    
+                    const checkCell = document.createElement('td');
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.id = `combo-${absoluteIndex}`;
+                    checkbox.addEventListener('change', function() {
+                        document.querySelectorAll('[id^="combo-"]').forEach(cb => {
+                            if (cb.id !== this.id) cb.checked = false;
+                        });
+                        updateChartsBasedOnSelection(this.checked ? combo : null);
+                    });
+                    if (absoluteIndex === 0 && page === 1) checkbox.checked = true;
+                    checkCell.appendChild(checkbox);
+                    row.appendChild(checkCell);
+                    
+                    const optionCell = document.createElement('td');
+                    optionCell.textContent = absoluteIndex + 1;
+                    row.appendChild(optionCell);
+                    
+                    Array.from(allGradesInCombinations).sort().forEach(grade => {
+                        const cell = document.createElement('td');
+                        cell.textContent = combo[grade] || 0;
+                        row.appendChild(cell);
+                    });
+                    
+                    const gpaCell = document.createElement('td');
+                    gpaCell.textContent = combo.gpa;
+                    row.appendChild(gpaCell);
+                    
+                    const finalGpaCell = document.createElement('td');
+                    finalGpaCell.textContent = combo.finalGPA;
+                    finalGpaCell.className = 'final-gpa';
+                    row.appendChild(finalGpaCell);
+                    
+                    tbody.appendChild(row);
+                });
+                
+                table.appendChild(tbody);
+                container.appendChild(table);
+                
+                if (totalPages > 1) {
+                    const paginationDiv = document.createElement('div');
+                    paginationDiv.className = 'pagination';
+                    
+                    const pageInfo = document.createElement('div');
+                    pageInfo.textContent = `Page ${page} of ${totalPages} (${combinations.length} total combinations)`;
+                    pageInfo.style.marginBottom = '10px';
+                    paginationDiv.appendChild(pageInfo);
+                    
+                    if (page > 1) {
+                        const firstButton = document.createElement('button');
+                        firstButton.textContent = '<<';
+                        firstButton.addEventListener('click', () => {
+                            currentPage = 1;
+                            renderTable(currentPage);
+                        });
+                        paginationDiv.appendChild(firstButton);
+                    }
+                    
+                    if (page > 1) {
+                        const prevButton = document.createElement('button');
+                        prevButton.textContent = 'Previous';
+                        prevButton.addEventListener('click', () => {
+                            currentPage--;
+                            renderTable(currentPage);
+                        });
+                        paginationDiv.appendChild(prevButton);
+                    }
+                    
+                    const pageRange = 2;
+                    const startPage = Math.max(1, page - pageRange);
+                    const endPage = Math.min(totalPages, page + pageRange);
+                    
+                    for (let i = startPage; i <= endPage; i++) {
+                        const pageButton = document.createElement('button');
+                        pageButton.textContent = i;
+                        if (i === page) {
+                            pageButton.style.backgroundColor = '#2563eb';
+                            pageButton.style.color = 'white';
+                            pageButton.style.fontWeight = 'bold';
+                        }
+                        pageButton.addEventListener('click', () => {
+                            currentPage = i;
+                            renderTable(currentPage);
+                        });
+                        paginationDiv.appendChild(pageButton);
+                    }
+                    
+                    if (page < totalPages) {
+                        const nextButton = document.createElement('button');
+                        nextButton.textContent = 'Next';
+                        nextButton.addEventListener('click', () => {
+                            currentPage++;
+                            renderTable(currentPage);
+                        });
+                        paginationDiv.appendChild(nextButton);
+                    }
+                    
+                    if (page < totalPages) {
+                        const lastButton = document.createElement('button');
+                        lastButton.textContent = '>>';
+                        lastButton.addEventListener('click', () => {
+                            currentPage = totalPages;
+                            renderTable(currentPage);
+                        });
+                        paginationDiv.appendChild(lastButton);
+                    }
+                    
+                    container.appendChild(paginationDiv);
+                }
+            }
+            
+            renderTable(currentPage);
+            document.getElementById('gradeCombinations').style.display = 'block';
+            
+            if (combinations.length > 0) {
+                updateChartsBasedOnSelection(combinations[0]);
+            }
+        }
+        
+        // Update charts based on selection
+        function updateChartsBasedOnSelection(combination) {
+            if (combination) {
+                document.getElementById('gradeA-count').textContent = combination.A || 0;
+                document.getElementById('gradeB-count').textContent = combination.B || 0;
+                document.getElementById('gradeC-count').textContent = combination.C || 0;
+                document.getElementById('gradeD-count').textContent = combination.D || 0;
+                document.getElementById('gradeF-count').textContent = combination.F || 0;
+                document.getElementById('gradeDistribution').style.display = 'flex';
+                
+                updateRequiredGradesPieChart(combination);
+            }
+        }
+        
+        // Update grading scale display
+        function updateGradingScale() {
+            const scale = document.getElementById('gradingScale').value;
+            document.getElementById('USFScale').style.display = scale === 'USF' ? 'block' : 'none';
+            document.getElementById('NEUScale').style.display = scale === 'NEU' ? 'block' : 'none';
+        }
+        
+        // Update GPA chart
+        function updateGPAChart(currentGPA, projectedGPA) {
+            const ctx = document.getElementById('gpaChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.gpaChart) window.gpaChart.destroy();
+            
+            window.gpaChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Current GPA', 'Projected GPA', 'Maximum GPA'],
+                    datasets: [{
+                        label: 'GPA Comparison',
+                        data: [currentGPA, projectedGPA, 4.0],
+                        backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(245, 158, 11, 0.7)', 'rgba(16, 185, 129, 0.4)'],
+                        borderColor: ['rgba(37, 99, 235, 1)', 'rgba(245, 158, 11, 1)', 'rgba(16, 185, 129, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 4.0, title: { display: true, text: 'GPA Value' } } },
+                    plugins: { title: { display: true, text: 'Your GPA Progress', font: { size: 18, family: 'Roboto' } } }
+                }
+            });
+        }
+        
+        // Update Target GPA chart
+        function updateTargetChart(currentGPA, targetGPA, requiredGPA) {
+            const ctx = document.getElementById('targetChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.targetChart) window.targetChart.destroy();
+            
+            let chartData = [currentGPA, targetGPA];
+            let chartLabels = ['Current GPA', 'Target GPA'];
+            let chartColors = ['rgba(37, 99, 235, 0.7)', 'rgba(220, 38, 38, 0.7)'];
+            let chartBorders = ['rgba(37, 99, 235, 1)', 'rgba(220, 38, 38, 1)'];
+            
+            if (requiredGPA <= 4.0 && requiredGPA >= 0) {
+                chartData.push(requiredGPA);
+                chartLabels.push('Required GPA');
+                chartColors.push('rgba(16, 185, 129, 0.7)');
+                chartBorders.push('rgba(16, 185, 129, 1)');
+            }
+            
+            window.targetChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: chartLabels,
+                    datasets: [{ label: 'GPA Values', data: chartData, backgroundColor: chartColors, borderColor: chartBorders, borderWidth: 1 }]
+                },
+                options: {
+                    responsive: true,
+                    scales: { y: { beginAtZero: true, max: 4.0, title: { display: true, text: 'GPA Value', font: { family: 'Roboto' } } } },
+                    plugins: { title: { display: true, text: 'GPA Target Analysis', font: { size: 18, family: 'Roboto' } } }
+                }
+            });
+        }
+        
+        // Update progress chart
+        function updateProgressChart(completedCredits, remainingCredits, totalCredits) {
+            const ctx = document.getElementById('progressChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.progressChart) window.progressChart.destroy();
+            
+            const completedPercentage = ((completedCredits / totalCredits) * 100).toFixed(1);
+            const remainingPercentage = ((remainingCredits / totalCredits) * 100).toFixed(1);
+            const remainingCourses = Math.ceil(remainingCredits / 3);
+            const completedCourses = Math.floor(completedCredits / 3);
+            
+            window.progressChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: [`Completed: ${completedCourses} courses (${completedPercentage}%)`, `Remaining: ${remainingCourses} courses (${remainingPercentage}%)`],
+                    datasets: [{
+                        data: [completedCredits, remainingCredits],
+                        backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(245, 158, 11, 0.7)'],
+                        borderColor: ['rgba(37, 99, 235, 1)', 'rgba(245, 158, 11, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Credit & Course Completion Progress', font: { size: 18, family: 'Roboto' } },
+                        legend: { position: 'bottom', labels: { font: { family: 'Roboto' } } },
+                        tooltip: { callbacks: { label: function(context) { return `${context.label}: ${context.raw} credits`; } } }
+                    }
+                }
+            });
+        }
+        
+        // Update course completion chart (Target GPA)
+        function updateCourseCompletionChart(completedCredits, totalCredits) {
+            const creditsPerCourse = 3;
+            const completedCourses = Math.floor(completedCredits / creditsPerCourse);
+            const totalCourses = Math.ceil(totalCredits / creditsPerCourse);
+            const remainingCourses = totalCourses - completedCourses;
+            const ctx = document.getElementById('courseCompletionChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.courseCompletionChart) window.courseCompletionChart.destroy();
+            
+            const completedPercentage = ((completedCourses / totalCourses) * 100).toFixed(1);
+            
+            window.courseCompletionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [`Completed Courses (${completedPercentage}%)`, `Remaining Courses (${(100 - completedPercentage).toFixed(1)}%)`],
+                    datasets: [{
+                        data: [completedCourses, remainingCourses],
+                        backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(245, 158, 11, 0.7)'],
+                        borderColor: ['rgba(29, 78, 216, 1)', 'rgba(217, 119, 6, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Your Course Completion Status', font: { family: 'Roboto', size: 18, weight: 'bold' } },
+                        legend: { position: 'bottom', labels: { font: { family: 'Roboto' } } },
+                        tooltip: { callbacks: { label: function(context) { return `${context.raw} courses`; } } }
+                    }
+                }
+            });
+        }
+        
+        // Update course completion chart (Calculate GPA)
+        function updateCalcCompletionChart(completedCredits, totalCredits) {
+            const creditsPerCourse = 3;
+            const completedCourses = Math.floor(completedCredits / creditsPerCourse);
+            const totalCourses = Math.ceil(totalCredits / creditsPerCourse);
+            const remainingCourses = totalCourses - completedCourses;
+            const ctx = document.getElementById('calcCompletionChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.calcCompletionChart) window.calcCompletionChart.destroy();
+            
+            const completedPercentage = ((completedCourses / totalCourses) * 100).toFixed(1);
+            
+            window.calcCompletionChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [`Completed Courses (${completedPercentage}%)`, `Remaining Courses (${(100 - completedPercentage).toFixed(1)}%)`],
+                    datasets: [{
+                        data: [completedCourses, remainingCourses],
+                        backgroundColor: ['rgba(37, 99, 235, 0.7)', 'rgba(245, 158, 11, 0.7)'],
+                        borderColor: ['rgba(29, 78, 216, 1)', 'rgba(217, 119, 6, 1)'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Your Course Completion Status', font: { family: 'Roboto', size: 18, weight: 'bold' } },
+                        legend: { position: 'bottom', labels: { font: { family: 'Roboto' } } },
+                        tooltip: { callbacks: { label: function(context) { return `${context.raw} courses`; } } }
+                    }
+                }
+            });
+        }
+        
+        // Update pie chart for required grades
+        function updateRequiredGradesPieChart(gradeCombination) {
+            const ctx = document.getElementById('requiredGradesPieChart')?.getContext('2d');
+            if (!ctx) return;
+            if (window.requiredGradesChart) window.requiredGradesChart.destroy();
+            
+            const labels = [];
+            const data = [];
+            const backgroundColors = [];
+            
+            if (gradeCombination.A > 0) { labels.push(`A: ${gradeCombination.A}`); data.push(gradeCombination.A); backgroundColors.push('rgba(16, 185, 129, 0.7)'); }
+            if (gradeCombination.B > 0) { labels.push(`B: ${gradeCombination.B}`); data.push(gradeCombination.B); backgroundColors.push('rgba(37, 99, 235, 0.7)'); }
+            if (gradeCombination.C > 0) { labels.push(`C: ${gradeCombination.C}`); data.push(gradeCombination.C); backgroundColors.push('rgba(245, 158, 11, 0.7)'); }
+            if (gradeCombination.D > 0) { labels.push(`D: ${gradeCombination.D}`); data.push(gradeCombination.D); backgroundColors.push('rgba(249, 115, 22, 0.7)'); }
+            if (gradeCombination.F > 0) { labels.push(`F: ${gradeCombination.F}`); data.push(gradeCombination.F); backgroundColors.push('rgba(220, 38, 38, 0.7)'); }
+            
+            window.requiredGradesChart = new Chart(ctx, {
+                type: 'pie',
+                data: { labels: labels, datasets: [{ data: data, backgroundColor: backgroundColors, borderWidth: 1 }] },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        title: { display: true, text: 'Course Grade Distribution', font: { size: 18, family: 'Roboto' } },
+                        legend: { position: 'bottom', labels: { font: { family: 'Roboto' } } }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>
